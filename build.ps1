@@ -1,7 +1,11 @@
 param(
-    $version = "7.7.3"
+    $version = "7.7.3",
+    $packageVersion = $null,
+    $nugetApiKey = $null
 )
-
+if (!$packageVersion) {
+    $script:packageVersion = $version
+}
 $filename = "node-v$($version)-win-x64.zip"
 $nugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 $url = "https://nodejs.org/dist/latest/node-v$($version)-win-x64.zip"
@@ -26,14 +30,19 @@ Write-Output "Extracting $filename..."
 
 [System.IO.Compression.ZipFile]::ExtractToDirectory($filename, ".\")
 
-Rename-Item "node-v$($version)-win-x64" "tools"
+New-Item .\tools\node_modules\npm\bin -ItemType "directory" -ErrorAction SilentlyContinue
+Copy-Item ".\node-v$($version)-win-x64\*.*" .\tools\
+Copy-Item ".\node-v$($version)-win-x64\node_modules\npm\bin\*.*" .\tools\node_modules\npm\bin\ -Recurse
+
+Write-Output "Removing extra stuff from npm"
+Remove-Item .\tools\node_modules\npm\* -Exclude "bin\*" -Recurse -Force
 
 $nuspec = @"
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Nodejs.Redist.x64</id>
-        <version>$version</version>
+        <version>$packageVersion</version>
         <authors>mihasic</authors>
         <owners>mihasic</owners>
         <licenseUrl>https://github.com/nodejs/node/blob/master/LICENSE</licenseUrl>
@@ -56,4 +65,8 @@ Write-Output "Creating package..."
 ([xml]$nuspec).Save("the.nuspec")
 
 Write-Output "Creating package..."
-.\NuGet.exe pack .\the.nuspec -version $version
+.\NuGet.exe pack .\the.nuspec -version $packageVersion
+
+if ($nugetApiKey) {
+    .\nuget.exe push "Nodejs.Redist.x64.$packageVersion.nupkg" $nugetApiKey -source https://api.nuget.org/v3/index.json
+}
