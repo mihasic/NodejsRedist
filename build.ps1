@@ -11,8 +11,10 @@ $nugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 $url = "https://nodejs.org/dist/latest/node-v$($version)-win-x64.zip"
 
 Write-Output "Cleaning..."
+#git clean -xdf
 Remove-Item tools -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item *.nuspec -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item *.nupkg -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item node-v*-win-x64 -Recurse -Force -ErrorAction SilentlyContinue
 
 if (!(Test-Path "nuget.exe")) {
