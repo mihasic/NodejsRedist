@@ -32,12 +32,7 @@ Write-Output "Extracting $filename..."
 
 [System.IO.Compression.ZipFile]::ExtractToDirectory($filename, ".\")
 
-New-Item .\tools\node_modules\npm\bin -ItemType "directory" -ErrorAction SilentlyContinue
-Copy-Item ".\node-v$($version)-win-x64\*.*" .\tools\
-Copy-Item ".\node-v$($version)-win-x64\node_modules\npm\bin\*.*" .\tools\node_modules\npm\bin\ -Recurse
-
-Write-Output "Removing extra stuff from npm"
-Remove-Item .\tools\node_modules\npm\* -Exclude "bin\*" -Recurse -Force
+Rename-Item "node-v$($version)-win-x64" "tools"
 
 $nuspec = @"
 <?xml version="1.0" encoding="utf-8"?>
