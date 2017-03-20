@@ -8,7 +8,7 @@ if (!$packageVersion) {
 }
 $filename = "node-v$($version)-win-x64.zip"
 $nugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
-$url = "https://nodejs.org/dist/latest/node-v$($version)-win-x64.zip"
+$url = "https://nodejs.org/dist/v$($version)/node-v$($version)-win-x64.zip"
 
 Write-Output "Cleaning..."
 #git clean -xdf
@@ -57,7 +57,7 @@ $nuspec = @"
 </package>
 "@
 
-Write-Output "Creating package..."
+Write-Output "Creating package spec..."
 
 ([xml]$nuspec).Save("the.nuspec")
 
