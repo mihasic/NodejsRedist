@@ -9,7 +9,6 @@ if (!$packageVersion) {
 $baseDir = Split-Path $MyInvocation.MyCommand.Path
 
 $filename = "node-v$($version)-win-x64.zip"
-$fullPath = Join-Path $baseDir $filename
 $nugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 $url = "https://nodejs.org/dist/v$($version)/node-v$($version)-win-x64.zip"
 
@@ -70,4 +69,3 @@ Write-Output "Creating package..."
 if ($nugetApiKey) {
     .\nuget.exe push "Nodejs.Redist.x64.$packageVersion.nupkg" $nugetApiKey -source https://api.nuget.org/v3/index.json
 }
-#>
